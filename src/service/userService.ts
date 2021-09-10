@@ -1,9 +1,10 @@
 import {User} from "../model"
 
 //로그인
-async function findOne(): Promise<void> {
+async function findOne(): Promise<number> {
   try {
-    User.findOne()
+    const result = await User.findOne()
+    return result + 7
   } catch (e) {
     throw e
   }
