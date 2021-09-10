@@ -1,12 +1,9 @@
-import {IUser} from "../interface/user";
 import {db} from "../module";
 
-async function findOne(id: number): Promise<IUser> {
+async function findOne(): Promise<number> {
   try {
-    db.query('select 1 from dual', function(error, results, fields) {
-        if(error) throw error
-        console.log(results[0])
-    })
+    const [row] = await db.execute('SELECT 11 AS asd FROM dual')
+    return row ? row.asd : 0
   } catch (e) {
     throw e
   }
