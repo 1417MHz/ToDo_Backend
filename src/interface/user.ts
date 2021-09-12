@@ -1,10 +1,10 @@
 export interface IUserCreate {
   email: string
   password: string
-  salt: string
+  hash: string
 }
 
 export interface IUser extends IUserCreate {
-  id: number
-  createdAt: string
+  user_id: number
+  register_date: string
 }

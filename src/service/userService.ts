@@ -1,10 +1,9 @@
-import {User} from "../model"
+import {User} from '../model'
 
 //로그인
 async function findOne(): Promise<number> {
   try {
-    const result = await User.findOne()
-    return result + 7
+    return await User.findOne()
   } catch (e) {
     throw e
   }

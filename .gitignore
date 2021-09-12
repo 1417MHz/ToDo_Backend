@@ -121,3 +121,5 @@ idea
 #.elasticbeanstalk/*
 #!.elasticbeanstalk/*.cfg.yml
 #!.elasticbeanstalk/*.global.yml
+
+src/module/mysql.ts
