@@ -4,7 +4,6 @@ dotenv.config()
 
 export = {
   database: {
-    host: '',
-
+    host: ''
   }
 }

@@ -21,6 +21,7 @@ module.exports = {
   rules: {
     'prettier/prettier': ['error'],
     camelcase: 0,
+    'import/no-mutable-exports': 0,
     'consistent-return': 0,
     'dot-notation': 0,
     'func-names': 0,
