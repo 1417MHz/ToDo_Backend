@@ -21,6 +21,10 @@ async function login(user: IUser): Promise<any> {
         // 3. 비밀번호가 일치할 경우 토큰 생성
         //    user_id + 'myToken' 을 통해 토큰 생성
         const userToken = jwt.sign(userInfo.user_id.toString(), 'myToken')
+
+        // 유저 증명 테스트
+        console.log('user_id: ', await certificateUser(userToken, userInfo))
+
         return userToken
       }
     }
