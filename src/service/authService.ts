@@ -3,15 +3,17 @@ import {error} from 'winston'
 import jwt from 'jsonwebtoken'
 import {IUser, IUserCreate} from '../interface/user'
 import {certificateUser} from '../module/jwt'
-import {User} from '../model'
+import {Auth} from '../model'
 
 const saltRounds = 10
+let userToken
+let userInfo: IUser
 
 //로그인
 async function login(user: IUser): Promise<any> {
   try {
     // 1. 입력받은 이메일 정보가 DB에 있는지 확인
-    const userInfo: IUser = await User.loginUser(user)
+    userInfo = await Auth.loginUser(user)
     if (!userInfo) {
       throw new Error('User not Found')
     } else {
@@ -20,7 +22,7 @@ async function login(user: IUser): Promise<any> {
       if (verifyStatus) {
         // 3. 비밀번호가 일치할 경우 토큰 생성
         //    user_id + 'myToken' 을 통해 토큰 생성
-        const userToken = jwt.sign(userInfo.user_id.toString(), 'myToken')
+        userToken = jwt.sign(userInfo.user_id.toString(), 'myToken')
 
         // 유저 증명 테스트
         console.log('user_id: ', await certificateUser(userToken, userInfo))
@@ -65,7 +67,7 @@ async function register(user: IUserCreate): Promise<any> {
         user.password = hash // 암호화된 비밀번호로 교체
 
         // DB에 유저 정보 입력
-        User.createUser(user)
+        Auth.createUser(user)
       })
     })
   } catch (e) {
@@ -75,4 +77,4 @@ async function register(user: IUserCreate): Promise<any> {
 
 //토큰 리프레시
 
-export {login, register}
+export {login, register, userToken, userInfo}

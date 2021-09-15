@@ -6,7 +6,7 @@ async function certificateUser(userToken, userInfo) {
     jwt.verify(userToken, 'myToken', (err, decoded) => {
       if (decoded === userInfo.user_id.toString()) {
         console.log('* Token Verified')
-        resolve(decoded)
+        resolve(true)
       } else {
         reject(err)
       }
