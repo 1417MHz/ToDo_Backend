@@ -1,27 +1,52 @@
 import bcrypt from 'bcrypt'
 import {error} from 'winston'
+import jwt from 'jsonwebtoken'
 import {IUser, IUserCreate} from '../interface/user'
-import {User} from '../model'
+import {certificateUser} from '../module/jwt'
+import {Auth} from '../model'
 
 const saltRounds = 10
+let userToken
+let userInfo: IUser
 
 //로그인
 async function login(user: IUser): Promise<any> {
   try {
-    const userInfo: IUser = await User.loginUser(user)
+    // 1. 입력받은 이메일 정보가 DB에 있는지 확인
+    userInfo = await Auth.loginUser(user)
     if (!userInfo) {
       throw new Error('User not Found')
     } else {
-      bcrypt.compare(user.password, userInfo.password, function (err, isMatch) {
-        if (err) {
-          throw new Error(err)
-        }
-        return isMatch
-      })
+      // 2. 이메일 정보가 DB에 있다면, 입력받은 비밀번호가 일치한지 확인
+      const verifyStatus = await verifyUser(user.password, userInfo.password)
+      if (verifyStatus) {
+        // 3. 비밀번호가 일치할 경우 토큰 생성
+        //    user_id + 'myToken' 을 통해 토큰 생성
+        userToken = jwt.sign(userInfo.user_id.toString(), 'myToken')
+
+        // 유저 증명 테스트
+        console.log('user_id: ', await certificateUser(userToken, userInfo))
+
+        return userToken
+      }
     }
   } catch (e) {
     throw e
   }
+}
+
+// 입력받은 유저 비밀번호와 DB 속 비밀번호가 일치한지 확인
+async function verifyUser(inputPassword, encryptedPassword) {
+  return new Promise((resolve, reject) => {
+    // DB 속 비밀번호를 복호화 하여 입력받은 비밀번호와 대조
+    bcrypt.compare(inputPassword, encryptedPassword, (err, isMatch) => {
+      if (err) reject(err)
+      else {
+        console.log('* Password Verified')
+        resolve(isMatch)
+      }
+    })
+  })
 }
 
 //회원가입
@@ -42,7 +67,7 @@ async function register(user: IUserCreate): Promise<any> {
         user.password = hash // 암호화된 비밀번호로 교체
 
         // DB에 유저 정보 입력
-        User.createUser(user)
+        Auth.createUser(user)
       })
     })
   } catch (e) {
@@ -52,4 +77,4 @@ async function register(user: IUserCreate): Promise<any> {
 
 //토큰 리프레시
 
-export {login, register}
+export {login, register, userToken, userInfo}

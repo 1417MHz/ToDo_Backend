@@ -4,8 +4,8 @@ import {AuthService} from '../../service'
 // 로그인
 async function postAuthLogin(req: Request, res: Response, next: Function): Promise<void> {
   try {
-    await AuthService.login(req.body)
-    res.status(200).json({success: true})
+    const userToken = await AuthService.login(req.body)
+    res.status(200).json({success: true, userToken})
   } catch (e) {
     console.log('Login Failed')
     next(e)
